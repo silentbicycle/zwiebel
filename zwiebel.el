@@ -97,7 +97,8 @@
                              *zwiebel-last-complete* (current-time)
                              *zwiebel-state* 'overtime
                              *zwiebel-timer* nil)))
-        *zwiebel-state* 'work))
+        *zwiebel-state* 'work)
+  (zwiebel-update-time-string))
 
 (defun zwiebel-task ()
   "Print the current task."
@@ -113,13 +114,15 @@
 	   (setq *zwiebel-interrupted* (1+ *zwiebel-interrupted*)
 		 *zwiebel-timer* nil
 		 *zwiebel-state* 'idle)
-	   (run-hooks 'zwiebel-interrupt-hook)))
+	   (run-hooks 'zwiebel-interrupt-hook)
+	   (zwiebel-update-time-string)))
 	((eq *zwiebel-state* 'break)
 	 (progn
 	   (cancel-timer *zwiebel-timer*)
            (run-hooks 'zwiebel-break-done-hook)
 	   (setq *zwiebel-state* 'idle
-		 *zwiebel-timer* nil)))))
+		 *zwiebel-timer* nil)
+	   (zwiebel-update-time-string)))))
 
 (defun zwiebel-get-timer-remaining ()
   "Get the remaining time from a timer."
@@ -171,7 +174,8 @@
                            (lambda ()
                              (run-hooks 'zwiebel-break-done-hook)
                              (setq *zwiebel-state* 'idle
-                                   *zwiebel-timer* nil)))))
+                                   *zwiebel-timer* nil))))
+		(zwiebel-update-time-string))
       (error "Not complete")))
 
 (defun zwiebel-modeline ()
@@ -192,7 +196,8 @@
 
 (defun zwiebel-tick ()
   "Callback for functions to be run once per second."
-  (zwiebel-update-time-string))
+  (zwiebel-update-time-string)
+  (force-mode-line-update))
 
 (defun zwiebel-dwim (uarg)
   "Start task, interrupt, break, or end break, depending on current state."
