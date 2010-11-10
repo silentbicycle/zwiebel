@@ -61,6 +61,7 @@
 ;; Configuration
 (defvar zwiebel-work-minutes 25 "The length of a work session, in minutes.")
 (defvar zwiebel-break-minutes 5 "The length of a break, in minutes.")
+(defvar zwiebel-long-break-minutes 30 "The length of a long break, in minutes.")
 (defvar zwiebel-show-seconds nil "Show seconds remaining on timer?")
 (defvar zwiebel-timer-on-modeline t
   "Whether to add the current timer info to the mode-line.")
@@ -164,14 +165,15 @@ for a task description, unless run with universal argument."
          (zwiebel-seconds-to-m-s-pair (cadr diff)) t)
         "0")))
 
-(defun zwiebel-break ()
+(defun zwiebel-break (uarg)
   (interactive)
   (if (eq *zwiebel-state* 'overtime)
       (progn
         (run-hooks 'zwiebel-break-hook)
         (setq *zwiebel-state* 'break
               *zwiebel-timer*
-              (run-at-time (* 60 zwiebel-break-minutes)
+              (run-at-time (* 60 (if uarg zwiebel-long-break-minutes
+                                   zwiebel-break-minutes))
                            nil
                            (lambda ()
                              (run-hooks 'zwiebel-break-done-hook)
@@ -207,7 +209,7 @@ for a task description, unless run with universal argument."
   (let ((s *zwiebel-state*))
     (cond ((eq s 'idle) (zwiebel-start uarg))
           ((eq s 'work) (zwiebel-interrupt))
-          ((eq s 'overtime) (zwiebel-break))
+          ((eq s 'overtime) (zwiebel-break uarg))
           ((eq s 'break) (zwiebel-interrupt))
           (t (error "Match failed")))))
 
