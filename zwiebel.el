@@ -64,6 +64,7 @@
 (defvar zwiebel-show-seconds nil "Show seconds remaining on timer?")
 (defvar zwiebel-timer-on-modeline t
   "Whether to add the current timer info to the mode-line.")
+(defvar zwiebel-ask-for-task t "Whether to ask for a task description")
 
 ;; Hooks
 (defvar zwiebel-start-hook nil "Task start hook.")
@@ -83,9 +84,10 @@
 
 
 (defun zwiebel-start (uarg)
-  "Start a new task. Prompts for a new task, unless run with universal argument."
+  "Start a new task. If `zwiebel-ask-for-task' is not nil, prompt
+for a task description, unless run with universal argument."
   (interactive "p")
-  (when (or (not (= uarg 4)) (null *zwiebel-task*))
+  (when (and zwiebel-ask-for-task (or (not (= uarg 4)) (null *zwiebel-task*)))
     (setq *zwiebel-task* (read-string "Task? ")))
   (assert (or (eq *zwiebel-state* 'idle) (eq *zwiebel-state* 'break)))
   (setq *zwiebel-timer*
