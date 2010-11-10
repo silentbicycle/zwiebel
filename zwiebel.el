@@ -166,13 +166,14 @@ for a task description, unless run with universal argument."
         "0")))
 
 (defun zwiebel-break (uarg)
-  (interactive "P")
+  (interactive "p")
   (if (or (eq *zwiebel-state* 'overtime) (eq *zwiebel-state* 'idle))
       (progn
         (run-hooks 'zwiebel-break-hook)
         (setq *zwiebel-state* 'break
               *zwiebel-timer*
-              (run-at-time (* 60 (if uarg zwiebel-long-break-minutes
+              (run-at-time (* 60 (if current-prefix-arg
+                                     zwiebel-long-break-minutes
                                    zwiebel-break-minutes))
                            nil
                            (lambda ()
