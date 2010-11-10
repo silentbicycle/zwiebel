@@ -166,7 +166,7 @@ for a task description, unless run with universal argument."
         "0")))
 
 (defun zwiebel-break (uarg)
-  (interactive "p")
+  (interactive "P")
   (if (eq *zwiebel-state* 'overtime)
       (progn
         (run-hooks 'zwiebel-break-hook)
