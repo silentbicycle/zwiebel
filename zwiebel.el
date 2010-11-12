@@ -56,16 +56,17 @@
 ;;    * Set up custom stuff. I never use custom, but hey.
 ;;    * Is there a better way to get the seconds remaining from a timer?
 
-(defconst zwiebel-version 0.1 "Version.")
+(defconst zwiebel-version 0.2 "Version.")
 
 ;; Configuration
 (defvar zwiebel-work-minutes 25 "The length of a work session, in minutes.")
 (defvar zwiebel-break-minutes 5 "The length of a break, in minutes.")
-(defvar zwiebel-long-break-minutes 30 "The length of a long break, in minutes.")
+(defvar zwiebel-long-break-minutes 30
+  "The length of a long break, in minutes.")
 (defvar zwiebel-show-seconds nil "Show seconds remaining on timer?")
 (defvar zwiebel-timer-on-modeline t
   "Whether to add the current timer info to the mode-line.")
-(defvar zwiebel-ask-for-task t "Whether to ask for a task description")
+(defvar zwiebel-ask-for-task t "Whether to ask for a task description.")
 
 ;; Hooks
 (defvar zwiebel-start-hook nil "Task start hook.")
@@ -88,7 +89,8 @@
   "Start a new task. If `zwiebel-ask-for-task' is not nil, prompt
 for a task description, unless run with universal argument."
   (interactive "p")
-  (when (and zwiebel-ask-for-task (or (not (= uarg 4)) (null *zwiebel-task*)))
+  (when (and zwiebel-ask-for-task
+             (or (not (= uarg 4)) (null *zwiebel-task*)))
     (setq *zwiebel-task* (read-string "Task? ")))
   (assert (or (eq *zwiebel-state* 'idle) (eq *zwiebel-state* 'break)))
   (setq *zwiebel-timer*
@@ -166,8 +168,10 @@ for a task description, unless run with universal argument."
         "0")))
 
 (defun zwiebel-break (uarg)
+  "Go on break. With universal argument, go on a long break."
   (interactive "p")
-  (if (or (eq *zwiebel-state* 'overtime) (eq *zwiebel-state* 'idle))
+  (if (or (eq *zwiebel-state* 'overtime)
+          (eq *zwiebel-state* 'idle))
       (progn
         (run-hooks 'zwiebel-break-hook)
         (setq *zwiebel-state* 'break
